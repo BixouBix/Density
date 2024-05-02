@@ -29,16 +29,17 @@ class Admin::StudentsController < ApplicationController
   end
 
   def enroll
+    @course_student = CourseStudent.create(student_id: params[:id], course_id: params[:course_id], year: params[:year])
 
-    if CourseStudent.create!(student_id: student.id, course_id: course.id, year: params[:year])
-      render json: { message: "Student enrolled successfully" }, status: :created
+    if @course_student.errors.any?
+      render json: { message: @course_student.errors.map(&:message) }, status: :unprocessable_entity
     else
-      render json: { message: "Student enrollment failed" }, status: :unprocessable_entity
+      render json: { message: "Student enrolled successfully" }, status: :created
     end
   end
 
   def grade_quarter
-    @course_student = CourseStudent.find_by(student: student, course: course, year: params[:year])
+    @course_student = CourseStudent.find_by(student_id: params[:id], course_id: params[:course_id], year: params[:year])
 
     if @course_student.update!("q#{params[:quarter]}" => params[:grade])
       render json: { message: "Grade updated successfully" }, status: :ok

@@ -51,4 +51,52 @@ RSpec.describe Admin::StudentsController, type: :controller do
       end
     end
   end
+
+  describe "POST #enroll" do
+    let!(:student) { create(:student) }
+    let!(:course) { create(:course) }
+
+    it "enrolls a student in a course" do
+      post :enroll, params: { id: student.id, course_id: course.id, year: 2021 }
+      expect(response).to have_http_status(:created)
+    end
+
+    context "when enrollment is successful" do
+      it "renders a JSON response with success message" do
+        post :enroll, params: { id: student.id, course_id: course.id, year: 2021 }
+        expect(response).to have_http_status(:created)
+        expect(response.content_type).to match(a_string_including("application/json"))
+        expect(JSON.parse(response.body)).to eq({ "message" => "Student enrolled successfully" })
+      end
+    end
+
+    context "when enrollment fails" do
+
+      it "renders a JSON response with failure message" do
+        post :enroll, params: { id: 0, course_id: course.id, year: 2021 }
+        expect(response).to have_http_status(:unprocessable_entity)
+        expect(response.content_type).to match(a_string_including("application/json"))
+      end
+    end
+
+    describe "POST #grade_quarter" do
+      let!(:student) { create(:student) }
+      let!(:course) { create(:course) }
+      let!(:course_student) { create(:course_student, student: student, course: course, year: 2021) }
+
+      it "updates the student's grade for a course" do
+        post :grade_quarter, params: { id: student.id, course_id: course.id, year: 2021, quarter: 1, grade: 9 }
+        expect(response).to have_http_status(:ok)
+      end
+
+      context "when grade update is successful" do
+        it "renders a JSON response with success message" do
+          post :grade_quarter, params: { id: student.id, course_id: course.id, year: 2021, quarter: 1, grade: 9 }
+          expect(response).to have_http_status(:ok)
+          expect(response.content_type).to match(a_string_including("application/json"))
+          expect(JSON.parse(response.body)).to eq({ "message" => "Grade updated successfully" })
+        end
+      end
+    end
+  end
 end

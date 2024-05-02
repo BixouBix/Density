@@ -1,5 +1,5 @@
 class CourseStudent < ApplicationRecord
-  belongs_to :student, class_name: "User", foreign_key: "user_id", polymorphic: true
+  belongs_to :student, class_name: "User", foreign_key: "user_id"
   belongs_to :course
 
   alias_attribute :student_id, :user_id
