@@ -1,6 +1,11 @@
+# frozen_string_literal: true
+
+# Admin::StudentsController is responsible for managing students in the admin context.
 class Admin::StudentsController < ApplicationController
   # before_action :authenticate_user!
 
+  # GET /admin/students
+  # Returns a list of all students along with their courses, course years, and grades for each course.
   def index
     @students = Student.all.map do |student|
       {
@@ -18,6 +23,8 @@ class Admin::StudentsController < ApplicationController
     render json: @students, status: :ok
   end
 
+  # POST /admin/students
+  # Creates a new student with the provided parameters.
   def create
     @student = Student.create(student_params)
 
@@ -28,6 +35,8 @@ class Admin::StudentsController < ApplicationController
     end
   end
 
+  # POST /admin/students/:id/enroll
+  # Enrolls a student in a course for a specific year.
   def enroll
     @course_student = CourseStudent.create(student_id: params[:id], course_id: params[:course_id], year: params[:year])
 
@@ -38,6 +47,8 @@ class Admin::StudentsController < ApplicationController
     end
   end
 
+  # POST /admin/students/:id/grade_quarter
+  # Updates the grade for a specific quarter of a student's course.
   def grade_quarter
     @course_student = CourseStudent.find_by(student_id: params[:id], course_id: params[:course_id], year: params[:year])
 
@@ -51,15 +62,8 @@ class Admin::StudentsController < ApplicationController
 
   private
 
+  # Strong parameters for the student model.
   def student_params
     params.require(:student).permit(:first_name, :last_name, :email, :password)
-  end
-
-  def student
-    @student ||= Student.find(params[:id])
-  end
-
-  def course
-    @course ||= Course.find(params[:course_id])
   end
 end

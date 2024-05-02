@@ -1,6 +1,10 @@
+# frozen_string_literal: true
 class Student::CoursesController < ApplicationController
-  # before_action :authenticate_user!
+  before_action :authenticate_user!
 
+  # GET /student/courses
+  # Returns a list of all courses that the current student is enrolled in, grouped by year.
+  # For each course, it also returns the grades that the student received.
   def index
       @courses =
         {

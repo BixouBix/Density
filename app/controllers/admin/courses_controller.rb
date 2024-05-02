@@ -1,7 +1,11 @@
+# frozen_string_literal: true
+
+# Admin::CoursesController is responsible for managing courses in the admin context.
 class Admin::CoursesController < ApplicationController
   # before_action :authenticate_user!
-  skip_before_action :verify_authenticity_token
 
+  # GET /admin/courses
+  # Returns a list of all courses along with the years they were imparted and the students who took the course each year.
   def index
     @courses = Course.all.map do |course|
       {
@@ -18,6 +22,8 @@ class Admin::CoursesController < ApplicationController
     render json: @courses, status: :ok
   end
 
+  # POST /admin/courses
+  # Creates a new course with the provided parameters.
   def create
     @course = Course.create(course_params)
 
@@ -30,6 +36,7 @@ class Admin::CoursesController < ApplicationController
 
   private
 
+  # Strong parameters for the create action.
   def course_params
     params.permit(:name)
   end
