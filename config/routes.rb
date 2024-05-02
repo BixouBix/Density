@@ -8,19 +8,18 @@ Rails.application.routes.draw do
 
   # Defines the root path route ("/")
   # root "posts#index"
-  match "home", :to => "home#index", :via => :get
-  root to: "home#index"
 
-  resources :students, only: %i[index create] do
-    member do
-      post :enroll
-      post :grade_quarter
+  namespace :admin do
+    resources :courses, only: %i[index create]
+    resources :students, only: %i[index create] do
+      member do
+        post :enroll
+        post :grade_quarter
+      end
     end
   end
-  resources :courses, only: [:create] do
-    collection do
-      get :admin_index
-      get :student_index
-    end
+
+  namespace :student do
+    resources :courses, only: %i[index]
   end
 end

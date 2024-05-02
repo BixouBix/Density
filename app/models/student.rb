@@ -1,8 +1,9 @@
 class Student < User
+  has_many :course_students
   has_many :courses, through: :course_students
 
-  def grades_for_course(course, year)
-    course_students.where(course: course, year: year).grades
+  def grades_for_course(course)
+    course_students.find_by(course: course)&.grades
   end
 
   def active_years
